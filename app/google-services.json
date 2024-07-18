@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "976125521337",
+    "firebase_url": "https://jenstore-cfd67-default-rtdb.firebaseio.com",
+    "project_id": "jenstore-cfd67",
+    "storage_bucket": "jenstore-cfd67.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976125521337:android:c289ecc0f981ba74cd9a68",
+        "android_client_info": {
+          "package_name": "com.example.jennyserviceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvd-wTaYYhScCyNXNveTogOvXIFhsm4D8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976125521337:android:ea754f396ff058d5cd9a68",
+        "android_client_info": {
+          "package_name": "com.example.jenstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvd-wTaYYhScCyNXNveTogOvXIFhsm4D8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

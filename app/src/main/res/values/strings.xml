@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Jenny Service App</string>
+    <string name="menu">Navigation Menu</string>
+    <string name="name">name</string>
+    <string name="buy">Buy</string>
+    <string name="amount">Amount</string>
+    <string name="worth">Worth of Items</string>
+    <string name="discount">Discount</string>
+    <string name="get">Get</string>
+    <string name="discountOff">% Off</string>
+    <string name="valid">Valid for</string>
+    <string name="num">num</string>
+    <string name="days">days</string>
+    <string name="addImage">addImage</string>
+    <string name="save">save\n</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="price">price</string>
+    <string name="selectImage">Select Image</string>
+    <string name="brand">brand</string>
+    <string name="noItem">numItems</string>
+    <string name="description">description</string>
+    <string name="itemType">itemType</string>
+    <string name="saveVideoToStorage">Save Image To Storage</string>
+    <string name="selectVideo">Select Video</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="title">title</string>
+    <string name="message">message</string>
+    <string name="send">send</string>
+</resources>
