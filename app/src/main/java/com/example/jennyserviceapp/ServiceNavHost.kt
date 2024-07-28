@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +24,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.jennyserviceapp.ui.screens.message.MessageScreen
 import com.example.jennyserviceapp.ui.screens.notification.NotificationScreen
 import com.example.jennyserviceapp.ui.screens.orders.CustomerOrdersScreen
-import com.example.jennyserviceapp.ui.screens.profile.AccountViewModel
 import com.example.jennyserviceapp.ui.screens.profile.AccountsScreen
 import com.example.jennyserviceapp.ui.screens.profile.login.LoginScreen
 import com.example.jennyserviceapp.ui.screens.promotions.PromotionScreen
@@ -45,7 +42,6 @@ fun ServiceNavHost(
     allScreen: List<ServiceDestinations>,
     currentScreen: ServiceDestinations,
     navigateScreens: (ServiceDestinations) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -120,9 +116,7 @@ fun ServiceNavHost(
                 composable(UploadFeed.route) {
                     FeedScreen()
                 }
-                composable(Message.route) {
-                    MessageScreen()
-                }
+
                 composable(SendNotification.route) {
                     NotificationScreen()
                 }

@@ -25,7 +25,8 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val repository: Repository by lazy {
         RepositoryImpl(
             firestore = firestore,
-            firebaseStorage = storage
+            firebaseStorage = storage,
+            accountService = accountService
         )
     }
 

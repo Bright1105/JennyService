@@ -29,4 +29,12 @@
     <string name="title">title</string>
     <string name="message">message</string>
     <string name="send">send</string>
+    <string name="pending">PENDING</string>
+    <string name="complete">COMPLETED</string>
+    <string name="ship">SHIPPING</string>
+    <string name="accept">Accept</string>
+    <string name="customer">Customer Information:</string>
+    <string name="phone">phone</string>
+    <string name="userAddress">Customer Address:</string>
+    <string name="back">back</string>
 </resources>

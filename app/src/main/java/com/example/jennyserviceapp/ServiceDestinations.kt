@@ -33,10 +33,6 @@ object Orders : ServiceDestinations {
     override val route: String = "customer orders"
 }
 
-object Message : ServiceDestinations {
-    override val icon: ImageVector = Icons.AutoMirrored.Filled.Message
-    override val route: String = "messages"
-}
 
 object SendNotification : ServiceDestinations {
     override val icon: ImageVector = Icons.Default.Notifications
@@ -64,4 +60,4 @@ object Splash : ServiceDestinations {
     override val route: String = "splash"
 }
 
-val serviceTabColumnBar = listOf(Orders, Message, HomeUpload, UploadFeed, SendNotification, Promotions, Accounts)
+val serviceTabColumnBar = listOf(Orders,  HomeUpload, UploadFeed, SendNotification, Promotions, Accounts)

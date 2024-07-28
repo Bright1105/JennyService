@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.jennyserviceapp.ui.screens.notification.NotificationViewModel
+import com.example.jennyserviceapp.ui.screens.orders.CustomerOrdersViewModel
 import com.example.jennyserviceapp.ui.screens.profile.AccountViewModel
 import com.example.jennyserviceapp.ui.screens.profile.login.LoginViewModel
 import com.example.jennyserviceapp.ui.screens.promotions.PromotionsViewModel
@@ -58,6 +59,12 @@ object ServiceViewModelProvider {
 
         initializer {
             NotificationViewModel(
+                repository = serviceApplication().container.repository
+            )
+        }
+
+        initializer {
+            CustomerOrdersViewModel(
                 repository = serviceApplication().container.repository
             )
         }
