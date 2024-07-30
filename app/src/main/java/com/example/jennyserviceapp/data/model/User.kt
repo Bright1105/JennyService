@@ -12,12 +12,15 @@ data class User(
     val emailVerified: Boolean = false,
 )
 
-data class JennyInfo(
+// Work Manager
+
+data class JennyAccountInfo(
+    @DocumentId
+    val id: String = "",
     val firstName: String = "",
     val middleName: String? = "",
     val lastName: String = "",
     val bankName: String = "",
-    val bankImage: String? = null,
     val bankAccount: String = "",
     val phoneNumber: String = ""
 )
@@ -26,24 +29,23 @@ data class Checkout(
     @DocumentId
     val id: String = "",
     val userId: String = "",
-    val ordersEntity: OrdersEntity = OrdersEntity(),
+    val itemName: String = "",
+    val itemImage: String = "",
     val orderPending: Boolean = true,
     val orderReceived: Boolean = false,
+    val cancel: Boolean = false,
     val dateCreated: Timestamp? = null
 )
 
-
-data class OrdersEntity(
+data class CheckoutCancel(
+    @DocumentId
     val id: String = "",
-    val title: String = "",
-    val brand: String = "",
-    val countItem: Int = 0,
-    val price: Int = 0,
-    val description: String? = null,
-    val itemType: String? = null,
-    val dateCreated: String? = null,
-    val image: String = "",
-    // val itemAvailable: Int,
+    val userId: String = "",
+    val itemName: String = "",
+    val itemImage: String = "",
+    val reason: String = "",
+    val cancel: Boolean = true,
+    val dateCreated: Timestamp? = null
 )
 
 data class UserInformation(

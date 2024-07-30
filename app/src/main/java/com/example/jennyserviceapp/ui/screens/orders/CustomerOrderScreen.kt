@@ -21,15 +21,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -65,11 +68,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomerOrdersScreen(
-    ordersViewModel: CustomerOrdersViewModel = viewModel(factory = ServiceViewModelProvider.Factory)
+    ordersViewModel: CustomerOrdersViewModel = viewModel(factory = ServiceViewModelProvider.Factory),
+    popUp: () -> Unit
 ) {
     val uiState = ordersViewModel.uiState.collectAsState()
     val checkouts = ordersViewModel.getCheckout.collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
+    val reason = ordersViewModel.reason.collectAsState()
     val pagerState = rememberPagerState {
         OrdersTabs.entries.size
     }
@@ -94,7 +99,42 @@ fun CustomerOrdersScreen(
                         OrdersDetails(
                             checkout = it,
                             userInformation = it1,
-                            userAddress = it2
+                            userAddress = it2,
+                            onBackClicked = {
+                                ordersViewModel.back()
+                            },
+                            cancelAlert = uiState.value.cancelAlert,
+                            onClicked = {
+                                scope.launch {
+                                    ordersViewModel.cancelOrder(it)
+                                    ordersViewModel.cancelAlert()
+                                    ordersViewModel.back()
+                                }
+                            },
+                            onCancelAlert = {
+                                ordersViewModel.onCancelAlert()
+                            },
+                            value = reason.value,
+                            onValueChanged = { newReason ->
+                                ordersViewModel.onReasonChanged(newReason)
+                            },
+                            canceledAlert = {
+                                ordersViewModel.cancelAlert()
+                            },
+                            delivered = uiState.value.delivered,
+                            acceptOrder = {
+                                scope.launch {
+                                    ordersViewModel.updatePending(it)
+                                    ordersViewModel.onDelivered()
+                                    ordersViewModel.back()
+                                }
+                            },
+                            onDelivered = {
+                                scope.launch {
+                                    ordersViewModel.updateDelivered(it)
+                                    ordersViewModel.back()
+                                }
+                            }
                         )
                     }
                 }
@@ -132,6 +172,8 @@ fun CustomerOrdersScreen(
                         OrdersContentList(
                             checkouts = checkouts.value.filter {
                                 !it.orderReceived
+                            }.sortedByDescending {
+                                it.userId
                             },
                             onClicked = { id, userId ->
                                 scope.launch {
@@ -144,10 +186,9 @@ fun CustomerOrdersScreen(
                         OrdersContentList(
                             checkouts = checkouts.value.filter {
                                 it.orderReceived
+                            }.sortedByDescending {
+                                it.dateCreated
                             },
-//                            onClicked = { id, userId ->
-//
-//                            }
                         )
                     }
                 }
@@ -181,19 +222,31 @@ private fun OrdersContentList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OrdersDetails(
     modifier: Modifier = Modifier,
     checkout: Checkout,
     userInformation: UserInformation,
-    userAddress: UserAddress
+    onBackClicked: () -> Unit,
+    userAddress: UserAddress,
+    cancelAlert: Boolean,
+    onCancelAlert : () -> Unit,
+    canceledAlert: () -> Unit,
+    onClicked: (Checkout) -> Unit,
+    acceptOrder: (Checkout) -> Unit,
+    onDelivered: (Checkout) -> Unit,
+    delivered: Boolean,
+    value: String,
+    onValueChanged: (String) -> Unit,
+
 ) {
     Column(
         modifier = modifier
             .padding(dimensionResource(R.dimen.dp_10))
     ) {
         IconButton(
-            onClick = { /*TODO*/ }
+            onClick = onBackClicked
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -218,7 +271,7 @@ private fun OrdersDetails(
                 .padding(dimensionResource(R.dimen.dp_10))
         ) {
             OrdersDetailButton(
-                onClicked = { /*TODO*/ },
+                onClicked = onCancelAlert,
                 text = stringResource(R.string.cancel),
                 buttonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
                 modifier = Modifier
@@ -227,8 +280,8 @@ private fun OrdersDetails(
 
             )
             OrdersDetailButton(
-                onClicked = { /*TODO*/ },
-                text = stringResource(R.string.accept),
+                onClicked = { if (!delivered) acceptOrder(checkout) else onDelivered(checkout) },
+                text = if (!delivered) stringResource(R.string.accept) else stringResource(R.string.deliver),
                 buttonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
             )
         }
@@ -315,6 +368,79 @@ private fun OrdersDetails(
         }
     }
 
+    if (cancelAlert) {
+        BasicAlertDialog(
+            onDismissRequest = canceledAlert,
+            content = {
+                Column {
+                    Card(
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.dp_15))
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancelOrder),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = dimensionResource(R.dimen.dp_10)
+                                )
+                        )
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.dp_20)))
+                        Text(
+                            text = stringResource(R.string.cancelOrderNote),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Justify,
+                            modifier = Modifier
+                                .padding(
+                                    start = dimensionResource(R.dimen.dp_10),
+                                    end = dimensionResource(R.dimen.dp_10)
+                                )
+                        )
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.dp_20)))
+                        OutlinedTextField(
+                            value = value,
+                            onValueChange = onValueChanged,
+                            placeholder = {
+                                Text(
+                                    text = stringResource(R.string.reason),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = dimensionResource(R.dimen.dp_10),
+                                    end = dimensionResource(R.dimen.dp_10)
+                                )
+                                .height(dimensionResource(R.dimen.dp_100))
+                        )
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.dp_20)))
+                        Row {
+                            OrdersDetailButton(
+                                onClicked = canceledAlert,
+                                text = stringResource(R.string.no),
+                                buttonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
+                                modifier = Modifier
+                                    .padding(
+                                        start = dimensionResource(R.dimen.dp_10),
+                                        end = dimensionResource(R.dimen.dp_10)
+                                    )
+                            )
+                            OrdersDetailButton(
+                                onClicked = { onClicked(checkout) },
+                                text = stringResource(R.string.yes),
+                                buttonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    }
+                }
+            }
+        )
+    }
 
 }
 
@@ -358,10 +484,10 @@ private fun OrdersContent(
         Row(modifier = Modifier.padding(dimensionResource(R.dimen.dp_10))) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(checkout.ordersEntity.image)
+                    .data(checkout.itemImage)
                     .crossfade(true)
                     .build(),
-                contentDescription = checkout.ordersEntity.title,
+                contentDescription = checkout.itemName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(dimensionResource(R.dimen.dp_100))
@@ -369,7 +495,7 @@ private fun OrdersContent(
             )
             Column {
                 Text(
-                    text = checkout.ordersEntity.title,
+                    text = checkout.itemName,
                     style = MaterialTheme.typography.labelLarge,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier

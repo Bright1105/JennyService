@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Jenny Service App</string>
     <string name="menu">Navigation Menu</string>
-    <string name="name">name</string>
+    <string name="name">Name</string>
     <string name="buy">Buy</string>
     <string name="amount">Amount</string>
     <string name="worth">Worth of Items</string>
@@ -37,4 +37,16 @@
     <string name="phone">phone</string>
     <string name="userAddress">Customer Address:</string>
     <string name="back">back</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancelOrderNote">Confirm if you want to cancel the order</string>
+    <string name="cancelOrder">Cancel Order</string>
+    <string name="reason">Reason</string>
+    <string name="deliver">Delivered</string>
+    <string name="firstName">First Name</string>
+    <string name="middleName">Middle Name</string>
+    <string name="lastName">Last name</string>
+    <string name="bankName">Bank Name</string>
+    <string name="bankAccount">Bank Account</string>
+    <string name="phoneNumber">Phone Number</string>
 </resources>

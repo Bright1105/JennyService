@@ -108,7 +108,11 @@ fun ServiceNavHost(
                     .padding(it)
             ) {
                 composable(Orders.route) {
-                    CustomerOrdersScreen()
+                    CustomerOrdersScreen(
+                        popUp = {
+                            appState.popUp()
+                        }
+                    )
                 }
                 composable(HomeUpload.route) {
                     ProductScreen()

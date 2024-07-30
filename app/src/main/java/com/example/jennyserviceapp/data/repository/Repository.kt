@@ -2,7 +2,9 @@ package com.example.jennyserviceapp.data.repository
 
 import android.net.Uri
 import com.example.jennyserviceapp.data.model.Checkout
+import com.example.jennyserviceapp.data.model.CheckoutCancel
 import com.example.jennyserviceapp.data.model.Feeds
+import com.example.jennyserviceapp.data.model.JennyAccountInfo
 import com.example.jennyserviceapp.data.model.Products
 import com.example.jennyserviceapp.data.model.Promotions
 import com.example.jennyserviceapp.data.model.SendNotify
@@ -16,6 +18,7 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.dataObjects
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +53,13 @@ interface Repository {
     suspend fun getUserName(userId: String): UserInformation?
     suspend fun getUserAddress(userId: String): UserAddress?
     suspend fun getCheckoutById(id: String): Checkout?
+    suspend fun deleteCheckout(checkout: Checkout)
+    suspend fun addToUserCancelCheckout(checkoutCancel: CheckoutCancel)
+    suspend fun updatePending(checkout: Checkout)
+    suspend fun updateDelivered(checkout: Checkout)
+
+    suspend fun createBankInfo(jennyAccountInfo: JennyAccountInfo)
+    val getBankInfo: Flow<JennyAccountInfo?>
 }
 
 
@@ -65,6 +75,20 @@ class RepositoryImpl(
 
     private var videoUris: Uri? = null
 
+    override suspend fun createBankInfo(jennyAccountInfo: JennyAccountInfo) {
+        Firebase.firestore
+            .collection(ACCOUNTINFO)
+            .document("bank_infor_mat_ion@bank")
+            .set(jennyAccountInfo)
+            .await()
+    }
+
+    override val getBankInfo: Flow<JennyAccountInfo?> =
+        Firebase.firestore
+            .collection(ACCOUNTINFO)
+            .document("bank_infor_mat_ion@bank")
+            .dataObjects()
+
     override suspend fun getCheckoutById(id: String): Checkout? {
         return withContext(Dispatchers.IO) {
             val source = Source.SERVER
@@ -74,6 +98,45 @@ class RepositoryImpl(
                 .get(source)
                 .await()
                 .toObject()
+        }
+    }
+
+    override suspend fun deleteCheckout(checkout: Checkout) {
+        return withContext(Dispatchers.IO) {
+            Firebase.firestore
+                .collection(CHECKOUT)
+                .document(checkout.id)
+                .delete()
+                .await()
+        }
+    }
+
+    override suspend fun addToUserCancelCheckout(checkoutCancel: CheckoutCancel) {
+        return withContext(Dispatchers.IO) {
+            Firebase.firestore
+                .collection(CHECKOUTCANCELED)
+                .add(checkoutCancel)
+                .await()
+        }
+    }
+
+    override suspend fun updatePending(checkout: Checkout) {
+        return withContext(Dispatchers.IO) {
+            Firebase.firestore
+                .collection(CHECKOUT)
+                .document(checkout.id)
+                .set(checkout)
+                .await()
+        }
+    }
+
+    override suspend fun updateDelivered(checkout: Checkout) {
+        return withContext(Dispatchers.IO) {
+            Firebase.firestore
+                .collection(CHECKOUT)
+                .document(checkout.id)
+                .set(checkout)
+                .await()
         }
     }
 
@@ -237,5 +300,7 @@ class RepositoryImpl(
         private const  val CHECKOUT = "checkout"
         private const val USERINFORMATION = "userInformation"
         private const val USERADDRESS = "userAddress"
+        private const val CHECKOUTCANCELED = "checkoutCanceled"
+        private const val ACCOUNTINFO = "accountInfo"
     }
 }
